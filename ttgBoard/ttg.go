@@ -26,38 +26,39 @@ func NewBoard(numRows, numCols, numPlayers, winNumber int) *gameBoard {
 }
 
 // Returns true only if the given row and column are not out of range.
-func (board gameBoard) isInRange(row, col int) bool {
+func (board *gameBoard) IsInRange(row, col int) bool {
 	return row >= 0 && row < board.Rows && col >= 0 && col < board.Cols
 }
 
 // Returns true only if the given space exists and is not already occupied.
-func (board gameBoard) isValidTurn(row, col int) bool {
-	if ! board.isInRange(row, col) {
+func (board *gameBoard) IsValidTurn(row, col int) bool {
+	if ! board.IsInRange(row, col) {
 		return false
 	}
 	return board.BoardState[row][col] == 0
 }
 
 // Increments which player's turn it is.
-func (board gameBoard) changeWhoseTurn() {
-	player := board.WhoseTurn
-	player = player % board.NumPlayers
-	player += 1
+func (board *gameBoard) ChangeWhoseTurn() {
+	player := board.WhoseTurn + 1
+	if player > board.NumPlayers {
+		player = 1
+	}
 	board.WhoseTurn = player
 }
 
 // Attempts to make specified move. If invalid move, returns false.
-func (board gameBoard) TakeTurn(row, col int) bool {
-	if ! board.isValidTurn(row, col) {
+func (board *gameBoard) TakeTurn(row, col int) bool {
+	if ! board.IsValidTurn(row, col) {
 		return false
 	}
 	board.BoardState[row][col] = board.WhoseTurn
-	board.changeWhoseTurn()
+	board.ChangeWhoseTurn()
 	return true
 }
 
 // Returns the game board represented as a string
-func (board gameBoard) String() string {
+func (board *gameBoard) String() string {
 	var results []string
 	for _, row := range board.BoardState {
 		for _, cellVal := range row {
